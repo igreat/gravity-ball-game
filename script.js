@@ -28,8 +28,11 @@ class Ball extends Circle {
         this.velX = velX;
         this.velY = velY;
         this.theta = null;
-        this.thetaDot = null;
-        this.thetaDoubleDot = null;
+
+        // Angular velocity
+        this.angularVel = null;
+        // Angular acceleration
+        this.angularAcc = null;
 
         this.g = 0.5;
         this.health = 100;
@@ -75,17 +78,17 @@ class Ball extends Circle {
                 /* Here, the angular speed is set such that only the component of the original velocity
                    that is tangent to the circle at the point of collision goes into the the calculations
                    and the component perpendicular to it is lost */
-                this.thetaDot = (this.velX * Math.cos(this.theta) - this.velY * Math.sin(this.theta)) / realRadius;
+                this.angularVel = (this.velX * Math.cos(this.theta) - this.velY * Math.sin(this.theta)) / realRadius;
 
-                this.thetaDoubleDot = (-this.g / realRadius) * Math.sin(this.theta);
+                this.angularAcc = (-this.g / realRadius) * Math.sin(this.theta);
             }
             this.updateTheta(circle);
             this.x = realRadius*Math.sin(this.theta) + circle.x;
             this.y = realRadius*Math.cos(this.theta) + circle.y;
 
-            if (this.thetaDot*this.thetaDot*realRadius <= -this.g*Math.cos(this.theta)) {
-                this.velX = this.thetaDot*realRadius*Math.cos(this.theta);
-                this.velY = -this.thetaDot*realRadius*Math.sin(this.theta);
+            if (this.angularVel*this.angularVel*realRadius <= -this.g*Math.cos(this.theta)) {
+                this.velX = this.angularVel*realRadius*Math.cos(this.theta);
+                this.velY = -this.angularVel*realRadius*Math.sin(this.theta);
                 this.forceOut = true;
             }
         }
@@ -106,13 +109,13 @@ class Ball extends Circle {
     updateTheta(circle) {
         // Sets the angular acceleration based on an accurate DE describing pendulums
         const radius = (circle.radius - this.radius);
-        this.thetaDoubleDot = (-this.g / radius) * Math.sin(this.theta);
+        this.angularAcc = (-this.g / radius) * Math.sin(this.theta);
 
         // Updates the angular speed based on the angular acceleration
-        this.thetaDot += this.thetaDoubleDot;
+        this.angularVel += this.angularAcc;
 
         // Updates theta based on the angular speed
-        this.theta += this.thetaDot;
+        this.theta += this.angularVel;
     }
 
     getTheta(circle) {
