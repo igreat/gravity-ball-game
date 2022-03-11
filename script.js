@@ -6,6 +6,15 @@ const healthBar = document.getElementById("health-bar");
 canvas.height = window.innerHeight;
 canvas.width = canvas.height;
 
+// code to handle mouse input
+let mouseDown = false;
+document.body.onmousedown = function() { 
+    mouseDown = true;
+}
+document.body.onmouseup = function() {
+    mouseDown = false;
+}
+
 class Circle {
 
     constructor(x, y, radius) {
@@ -185,7 +194,6 @@ class Food extends Particle {
 
     static color = "#D82148";
     static score = 0;
-    static splashObjects = [];
 
     constructor(x, y, radius) {
         super(x, y, radius);
@@ -249,7 +257,7 @@ class Splash {
 
         // initializing the array of splash particles
         for (let i = 0; i < 20; i++) {
-            const splashParticle = new Circle(this.x, this.y, Math.random()*this.radius);
+            const splashParticle = new Circle(this.x, this.y, this.radius * (Math.random()+1)/2);
             const theta = Math.random() * 2 * Math.PI;
             const speed = Math.random();
             splashParticle.velX = speed * Math.cos(theta);
@@ -262,7 +270,7 @@ class Splash {
         for (const splashParticle of this.splashParticles) {
             splashParticle.x -= splashParticle.velX;
             splashParticle.y += splashParticle.velY;
-            splashParticle.radius *= 19/20;
+            splashParticle.radius *= 14/15;
         }
         /* This is equivalent to removing the splash animation after 3 seconds */
         if (Date.now() - this.spawnTime >= 3000) {
@@ -282,37 +290,39 @@ class Splash {
     }
 }
 
-// initializing the main ball and the inclosing circle
-const ball = new Ball(200, 300, 0, 0, 15);
-const bound = new Circle(canvas.width/2, canvas.height/2, canvas.height/2 - 10);
 
-// code to handle mouse input
-let mouseDown = 0;
-document.body.onmousedown = function() { 
-    mouseDown = 1;
+// Declaring all the variables that will be initalized inside init()
+let ball, bound, maxFoods, maxObstacles, food, obstacles, spawnTimer;
+
+function init() {
+
+    Food.score = 0;
+    
+    // initializing the main ball and the inclosing circle
+    ball = new Ball(200, 300, 0, 0, 15);
+    bound = new Circle(canvas.width/2, canvas.height/2, canvas.height/2 - 10);
+
+    maxFoods = 5;
+    maxObstacles = 3;
+    food = [];
+    obstacles = [];
+
+    for (let i = 0; i < maxFoods; i++) {
+        const foodParticle = new Food(0, 0, 8);
+        foodParticle.setToRandomPosition(bound);
+        food.push(foodParticle);
+    }
+    
+    for (let i = 0; i < maxObstacles; i++) {
+        const obstacle = new Obstacle(0, 0, 8);
+        obstacle.setToRandomPosition(bound);
+        obstacles.push(obstacle);
+    }
+    spawnTimer = Date.now(); 
 }
-document.body.onmouseup = function() {
-    mouseDown = 0;
-}
 
-const maxFoods = 5;
-const maxObstacles = 3;
-const food = [];
-const obstacles = [];
+init();
 
-for (let i = 0; i < maxFoods; i++) {
-    const foodParticle = new Food(0, 0, 8);
-    foodParticle.setToRandomPosition(bound);
-    food.push(foodParticle);
-}
-
-for (let i = 0; i < maxObstacles; i++) {
-    const obstacle = new Obstacle(0, 0, 8);
-    obstacle.setToRandomPosition(bound);
-    obstacles.push(obstacle);
-}
-
-let spawnTimer = Date.now(); 
 
 // Handles all updating
 function update() {
@@ -332,6 +342,8 @@ function update() {
         obstacle.update(bound, ball);
     }
 
+    // loses 3% health per second assuming frame rate is 60fps
+    ball.health -= 1 / 20;
 }
 
 // Handles all drawing
@@ -361,27 +373,21 @@ function draw() {
         ctx.fillStyle = splash.color;
         splash.draw();
     }
+
+    scoreElement.textContent = `Score: ${Food.score}`;
+
+    healthBar.style.width = `${ball.health}%`;
+
+    // If the ball health reaches 0, the game restarts
+    if (ball.health <= 0) {
+        init();
+    }
 }
 
 function animate() {
     requestAnimationFrame(animate);
-
     update();
     draw();
-
-    scoreElement.textContent = `Score: ${Food.score}`;
-
-    // loses 3% health per second assuming frame rate is 60fps
-    ball.health -= 1 / 20;
-
-    healthBar.style.width = `${ball.health}%`;
-    if (ball.health <= 0) {
-        if(!alert("GAME OVER!")){
-            ball.health = 100;
-            window.location.reload();
-        }
-    }
-    
 }
 
 animate();
