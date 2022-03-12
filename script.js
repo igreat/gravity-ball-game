@@ -63,9 +63,9 @@ class Ball extends Circle {
         }
         const realRadius = (circle.radius - this.radius);
 
-        // Checks if the ball is colliding with the boundaries of its inclosing circle
-        // if not, the motion is treated as free fall
-        // if yes, the motion is treated as if it was a pendulum
+        /* Checks if the ball is colliding with the boundaries of its inclosing circle
+         * if not, the motion is treated as free fall
+         * if yes, the motion is treated as if it was a pendulum */
 
         if (!this.isColliding(circle) || this.forceOut) {
 
@@ -76,9 +76,9 @@ class Ball extends Circle {
             this.y += this.velY;
             this.x += this.velX;
 
-            // The forceOut boolean is just a workaround so that the ball has another frame to leave the walls of the circle
-            // because sometimes just a single iteration isn't enough to get it out of the boundaries and into free fall
-            // could be removed for a better alternative
+            /* The forceOut boolean is just a workaround so that the ball has another frame to leave the walls of the circle
+             * because sometimes just a single iteration isn't enough to get it out of the boundaries and into free fall
+             * could be removed for a better alternative */
 
             this.forceOut = false;
 
@@ -90,8 +90,8 @@ class Ball extends Circle {
                 this.theta = this.getTheta(circle);
 
                 /* Here, the angular speed is set such that only the component of the original velocity
-                   that is tangent to the circle at the point of collision goes into the the calculations
-                   and the component perpendicular to it is lost */
+                 * that is tangent to the circle at the point of collision goes into the the calculations
+                 * and the component perpendicular to it is lost */
                 this.angularVel = (this.velX * Math.cos(this.theta) - this.velY * Math.sin(this.theta)) / realRadius;
 
                 this.angularAcc = (-this.g / realRadius) * Math.sin(this.theta);
@@ -353,8 +353,8 @@ function update() {
     // If the ball health reaches 0, the game restarts
     if (ball.health <= 0) {
         restartScreen = true;
-        if (ball.score > highestScore) {
-            highestScore = ball.score;
+        if (ball.score > parseInt(localStorage.score) || localStorage.score == null) {
+            localStorage.score = `${ball.score}`;
         }
     }
 }
@@ -391,10 +391,11 @@ function draw() {
 
     healthBar.style.width = `${ball.health}%`;
 }
+
 let highestScore = 0;
 function animate() {
     if (restartScreen) {
-        highScore.textContent = `Highest Score: ${highestScore}`;
+        highScore.textContent = `Highest Score: ${localStorage.score}`;
         restartButton.style.display = "flex";
     } else {
         update();
