@@ -2,6 +2,7 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("score");
 const healthBar = document.getElementById("health-bar");
+const restartButton = document.getElementById("restart-button");
 
 canvas.height = window.innerHeight;
 canvas.width = canvas.height;
@@ -14,6 +15,8 @@ document.body.onmousedown = function() {
 document.body.onmouseup = function() {
     mouseDown = false;
 }
+
+let restartScreen = false;
 
 class Circle {
 
@@ -296,6 +299,8 @@ let ball, bound, maxFoods, maxObstacles, food, obstacles, spawnTimer;
 
 function init() {
 
+    restartScreen = false;
+    restartButton.style.display = "none";
     Food.score = 0;
     
     // initializing the main ball and the inclosing circle
@@ -344,6 +349,11 @@ function update() {
 
     // loses 3% health per second assuming frame rate is 60fps
     ball.health -= 1 / 20;
+
+    // If the ball health reaches 0, the game restarts
+    if (ball.health <= 0) {
+        restartScreen = true;
+    }
 }
 
 // Handles all drawing
@@ -377,17 +387,17 @@ function draw() {
     scoreElement.textContent = `Score: ${Food.score}`;
 
     healthBar.style.width = `${ball.health}%`;
-
-    // If the ball health reaches 0, the game restarts
-    if (ball.health <= 0) {
-        init();
-    }
 }
 
 function animate() {
+    if (restartScreen) {
+        restartButton.style.display = "block";
+    } else {
+        update();
+        draw();
+    }
     requestAnimationFrame(animate);
-    update();
-    draw();
+
 }
 
 animate();

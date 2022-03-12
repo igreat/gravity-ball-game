@@ -36,3 +36,21 @@ body {
   border-radius: 10px;
   background-color: #d82148;
 }
+
+#restart-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  padding: 10px 30px;
+  text-align: center;
+  font-family: "Fira Code";
+  font-size: 24px;
+  font-weight: bold;
+
+  background-color: #d9ca8c;
+  border: none;
+  border-radius: 10px;
+  display: none;
+}
