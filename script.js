@@ -2,7 +2,8 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("score");
 const healthBar = document.getElementById("health-bar");
-const restartButton = document.getElementById("restart-button");
+const restartButton = document.getElementById("restart-screen");
+const highScore = document.getElementById("high-score");
 
 canvas.height = window.innerHeight;
 canvas.width = canvas.height;
@@ -50,6 +51,7 @@ class Ball extends Circle {
         this.health = 100;
         this.forceOut = false;
         this.trail = [];
+        this.score = 0;
     }
 
     update(circle) {
@@ -196,7 +198,6 @@ class Particle extends Circle {
 class Food extends Particle {
 
     static color = "#D82148";
-    static score = 0;
 
     constructor(x, y, radius) {
         super(x, y, radius);
@@ -209,7 +210,7 @@ class Food extends Particle {
             newSplash.color = Food.color;
             Splash.splashObjects.push(newSplash);
 
-            Food.score++;
+            ball.score++;
             if (ball.health < 90) {
                 ball.health += 10;
             }
@@ -301,7 +302,6 @@ function init() {
 
     restartScreen = false;
     restartButton.style.display = "none";
-    Food.score = 0;
     
     // initializing the main ball and the inclosing circle
     ball = new Ball(200, 300, 0, 0, 15);
@@ -353,6 +353,9 @@ function update() {
     // If the ball health reaches 0, the game restarts
     if (ball.health <= 0) {
         restartScreen = true;
+        if (ball.score > highestScore) {
+            highestScore = ball.score;
+        }
     }
 }
 
@@ -384,14 +387,15 @@ function draw() {
         splash.draw();
     }
 
-    scoreElement.textContent = `Score: ${Food.score}`;
+    scoreElement.textContent = `Score: ${ball.score}`;
 
     healthBar.style.width = `${ball.health}%`;
 }
-
+let highestScore = 0;
 function animate() {
     if (restartScreen) {
-        restartButton.style.display = "block";
+        highScore.textContent = `Highest Score: ${highestScore}`;
+        restartButton.style.display = "flex";
     } else {
         update();
         draw();

@@ -5,7 +5,7 @@ body {
   background-color: #54777d;
 }
 
-.UI {
+.score-UI {
   position: absolute;
   text-align: center;
   left: 2%;
@@ -37,20 +37,38 @@ body {
   background-color: #d82148;
 }
 
-#restart-button {
+#restart-screen {
+  font-family: "Fira Code";
+  font-size: 24px;
+  font-weight: bold;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  display: none;
+  background-color: #a88919e3;
+  border-radius: 10px;
+  flex-direction: column;
+}
 
+#restart-screen div {
+  margin: 20px;
+}
+
+#restart-screen button {
   padding: 10px 30px;
   text-align: center;
   font-family: "Fira Code";
   font-size: 24px;
   font-weight: bold;
-
-  background-color: #d9ca8c;
+  margin: 20px;
+  background-color: #d9ca8ccc;
   border: none;
   border-radius: 10px;
-  display: none;
+
+  align-items: center;
+}
+
+#restart-screen button:hover {
+  background-color: hsla(48, 50%, 30%, 0.815);
 }

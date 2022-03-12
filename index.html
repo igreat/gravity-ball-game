@@ -13,8 +13,11 @@
     <title>Game</title>
 </head>
 <body>
-    <button id="restart-button" onclick="init()">RESTART</button>
-    <div class="UI">
+    <div id="restart-screen">
+        <div id="high-score">Highest Score: 10</div>
+        <button onclick="init()">RESTART</button>
+    </div>
+    <div class="score-UI">
         <div id="score"></div>
         <div id="health">
             <span id="health-bar"></span>
