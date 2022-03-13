@@ -82,7 +82,9 @@ class Ball extends Circle {
 
             this.forceOut = false;
 
-        } else {
+        } 
+
+        if (this.isColliding(circle) && !this.forceOut) {
 
             if (this.theta == null) {
 
