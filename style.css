@@ -5,7 +5,8 @@ body {
   background-color: #54777d;
 }
 
-.score-UI {
+#score-UI {
+  display: none;
   position: absolute;
   text-align: center;
   left: 2%;

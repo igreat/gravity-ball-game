@@ -1,8 +1,11 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const scoreUI = document.getElementById("score-UI");
 const scoreElement = document.getElementById("score");
 const healthBar = document.getElementById("health-bar");
-const restartButton = document.getElementById("restart-screen");
+const restartScreen = document.getElementById("restart-screen");
+const restartButton = document.getElementById("restart-button");
+
 const highScore = document.getElementById("high-score");
 
 canvas.height = window.innerHeight;
@@ -17,7 +20,7 @@ document.body.onmouseup = function() {
     mouseDown = false;
 }
 
-let restartScreen = false;
+let isRestartScreen = false;
 
 class Circle {
 
@@ -259,9 +262,9 @@ class Splash {
 
         // default color;
         this.color = "black";
-        this.splashParticles = [];
 
-        // initializing the array of splash particles
+        // declaring and initializing the array of splash particles
+        this.splashParticles = [];
         for (let i = 0; i < 20; i++) {
             const splashParticle = new Circle(this.x, this.y, this.radius * (Math.random()+1)/2);
             const theta = Math.random() * 2 * Math.PI;
@@ -302,8 +305,9 @@ let ball, bound, maxFoods, maxObstacles, food, obstacles, spawnTimer;
 
 function init() {
 
-    restartScreen = false;
-    restartButton.style.display = "none";
+    isRestartScreen = false;
+    restartScreen.style.display = "none";
+    scoreUI.style.display = "block";
     
     // initializing the main ball and the inclosing circle
     ball = new Ball(200, 300, 0, 0, 15);
@@ -328,8 +332,13 @@ function init() {
     spawnTimer = Date.now(); 
 }
 
+/* This code is to make sure that the canvas is initialized
+ * and the restart screen is available with something drawn
+ * in the background on the first load */
 init();
-
+isRestartScreen = true;
+update();
+draw();
 
 // Handles all updating
 function update() {
@@ -354,7 +363,9 @@ function update() {
 
     // If the ball health reaches 0, the game restarts
     if (ball.health <= 0) {
-        restartScreen = true;
+        isRestartScreen = true;
+        restartButton.textContent = "RESTART";
+        scoreUI.style.display = "none";
         if (ball.score > parseInt(localStorage.score) || localStorage.score == null) {
             localStorage.score = `${ball.score}`;
         }
@@ -396,9 +407,10 @@ function draw() {
 
 let highestScore = 0;
 function animate() {
-    if (restartScreen) {
+    if (isRestartScreen) {
         highScore.textContent = `Highest Score: ${localStorage.score}`;
-        restartButton.style.display = "flex";
+        restartScreen.style.display = "flex";
+        scoreUI.style.display = "none";
     } else {
         update();
         draw();
