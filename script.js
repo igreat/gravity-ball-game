@@ -8,6 +8,11 @@ const restartButton = document.getElementById("restart-button");
 
 const highScore = document.getElementById("high-score");
 
+// Initializing local storage for any local storage that is yet to have a highest schore
+if (localStorage.score === "undefined") {
+    localStorage.score = "0";
+}
+
 canvas.height = window.innerHeight;
 canvas.width = canvas.height;
 
@@ -80,8 +85,7 @@ class Ball extends Circle {
             this.x += this.velX;
 
             /* The forceOut boolean is just a workaround so that the ball has another frame to leave the walls of the circle
-             * because sometimes just a single iteration isn't enough to get it out of the boundaries and into free fall
-             * could be removed for a better alternative */
+             * because sometimes just a single iteration isn't enough to get it out of the boundaries and into free fall */
 
             this.forceOut = false;
 
@@ -105,6 +109,9 @@ class Ball extends Circle {
             this.x = realRadius*Math.sin(this.theta) + circle.x;
             this.y = realRadius*Math.cos(this.theta) + circle.y;
 
+            /* Here, we are essentially making the ball "detach" from the walls
+             * of the bounding circle when the normal force acting on it is less
+             * than or equal to 0 */
             if (this.angularVel*this.angularVel*realRadius <= -this.g*Math.cos(this.theta)) {
                 this.velX = this.angularVel*realRadius*Math.cos(this.theta);
                 this.velY = -this.angularVel*realRadius*Math.sin(this.theta);
@@ -149,6 +156,9 @@ class Ball extends Circle {
     }
 
     updateTrail() {
+        /* Removes the tail circle to allow for 
+         * another circle to be added to the front 
+         * while still limiting the length of the tail */
         if (this.trail.length >= 15) {
             this.trail.shift();
         }
